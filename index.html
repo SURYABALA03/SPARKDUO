@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LogistiFlow - Modern Transportation & Logistics</title>
+    <style>
+        /* ===== GLOBAL RESET & VARIABLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dark-navy: #0f172a;
+            --darker-navy: #0a0e1a;
+            --medium-navy: #1e293b;
+            --pastel-blue: #e8f4f8;
+            --soft-purple: #f0ebf8;
+            --light-pink: #fef3f8;
+            --mint-green: #e8f8f5;
+            --cream: #faf9f6;
+            --white: #ffffff;
+            --text-light: #e2e8f0;
+            --text-gray: #94a3b8;
+            --accent-blue: #5e9fd9;
+            --accent-cyan: #22d3ee;
+            --accent-purple: #9b8bc6;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: var(--dark-navy);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* ===== NAVIGATION ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1.2rem 3rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            padding: 0.8rem 3rem;
+            background: rgba(15, 23, 42, 0.95);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-light);
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            animation: rotate3d 10s infinite ease-in-out;
+        }
+
+        @keyframes rotate3d {
+            0%, 100% { transform: rotateY(0deg); }
+            50% { transform: rotateY(360deg); }
+        }
+
+        .logo span {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text-gray);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-cyan);
+        }
+
+        .nav-links a:hover::before {
+            width: 100%;
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 2px;
+            background: var(--text-light);
+            transition: 0.3s;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 8rem 3rem 4rem;
+            background: var(--dark-navy);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(34, 211, 238, 0.15) 0%, transparent 70%);
+            top: -200px;
+            right: -200px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(94, 159, 217, 0.1) 0%, transparent 70%);
+            bottom: -100px;
+            left: -100px;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-30px, 30px) rotate(180deg); }
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.2s forwards;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-text h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease-out 0.4s backwards;
+        }
+
+        .hero-text p {
+            font-size: 1.25rem;
+            color: var(--text-gray);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+            animation: fadeInUp 1s ease-out 0.6s backwards;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            animation: fadeInUp 1s ease-out 0.8s backwards;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: white;
+            box-shadow: 0 10px 30px rgba(34, 211, 238, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(34, 211, 238, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(34, 211, 238, 0.1);
+            color: var(--accent-cyan);
+            border: 2px solid var(--accent-cyan);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent-cyan);
+            color: white;
+        }
+
+        .hero-image {
+            position: relative;
+            animation: fadeInRight 1s ease-out 0.6s backwards;
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* NEW: Professional Chatbot & Logistics Visualization */
+        .truck-visual {
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(135deg, rgba(10, 14, 26, 0.9), rgba(30, 41, 59, 0.6));
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+        }
+
+        /* Professional AI Brain Visualization */
+        .ai-brain-container {
+            position: absolute;
+            left: 10%;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 3;
+        }
+
+        .ai-brain {
+            position: relative;
+            width: 140px;
+            height: 140px;
+        }
+
+        .brain-core {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.15), rgba(94, 159, 217, 0.15));
+            border: 3px solid var(--accent-cyan);
+            border-radius: 50%;
+            position: relative;
+            animation: coreRotate 20s linear infinite;
+            box-shadow: 0 0 40px rgba(34, 211, 238, 0.3),
+                        inset 0 0 30px rgba(34, 211, 238, 0.1);
+        }
+
+        @keyframes coreRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .brain-ring {
+            position: absolute;
+            border: 2px solid rgba(34, 211, 238, 0.4);
+            border-radius: 50%;
+            border-top-color: var(--accent-cyan);
+            border-right-color: transparent;
+        }
+
+        .brain-ring:nth-child(1) {
+            width: 160px;
+            height: 160px;
+            top: -10px;
+            left: -10px;
+            animation: ringRotate 8s linear infinite;
+        }
+
+        .brain-ring:nth-child(2) {
+            width: 180px;
+            height: 180px;
+            top: -20px;
+            left: -20px;
+            animation: ringRotate 12s linear infinite reverse;
+        }
+
+        .brain-ring:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            top: -30px;
+            left: -30px;
+            animation: ringRotate 16s linear infinite;
+        }
+
+        @keyframes ringRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .ai-particles {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        .ai-particles:nth-child(1) { top: 0; left: 50%; animation: particleOrbit 4s linear infinite; }
+        .ai-particles:nth-child(2) { top: 50%; left: 0; animation: particleOrbit 4s linear infinite 1s; }
+        .ai-particles:nth-child(3) { bottom: 0; left: 50%; animation: particleOrbit 4s linear infinite 2s; }
+        .ai-particles:nth-child(4) { top: 50%; right: 0; animation: particleOrbit 4s linear infinite 3s; }
+
+        @keyframes particleOrbit {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .ai-label {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            white-space: nowrap;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Data Flow Connections */
+        .data-flow-container {
+            position: absolute;
+            left: 30%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 280px;
+            height: 280px;
+            z-index: 2;
+        }
+
+        .flow-node {
+            position: absolute;
+            width: 55px;
+            height: 55px;
+            background: rgba(30, 41, 59, 0.95);
+            border: 2px solid var(--accent-cyan);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .flow-node:hover {
+            transform: scale(1.15);
+            border-color: var(--accent-blue);
+            box-shadow: 0 10px 30px rgba(34, 211, 238, 0.4);
+        }
+
+        .flow-node::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), transparent);
+            border-radius: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .flow-node:hover::before {
+            opacity: 1;
+        }
+
+        /* Positioning nodes in a circular pattern */
+        .flow-node:nth-child(1) { top: 0; left: 50%; transform: translateX(-50%); }
+        .flow-node:nth-child(2) { top: 15%; right: 15%; }
+        .flow-node:nth-child(3) { top: 50%; right: 0; transform: translateY(-50%); }
+        .flow-node:nth-child(4) { bottom: 15%; right: 15%; }
+        .flow-node:nth-child(5) { bottom: 0; left: 50%; transform: translateX(-50%); }
+        .flow-node:nth-child(6) { bottom: 15%; left: 15%; }
+        .flow-node:nth-child(7) { top: 50%; left: 0; transform: translateY(-50%); }
+        .flow-node:nth-child(8) { top: 15%; left: 15%; }
+
+        /* Connecting Lines */
+        .connection-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                rgba(34, 211, 238, 0.1), 
+                rgba(34, 211, 238, 0.5), 
+                rgba(34, 211, 238, 0.1));
+            background-size: 200% 100%;
+            animation: lineFlow 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes lineFlow {
+            0%, 100% { background-position: 0% 0%; opacity: 0.3; }
+            50% { background-position: 100% 0%; opacity: 1; }
+        }
+
+        /* Professional Dashboard Interface */
+        .dashboard-container {
+            position: absolute;
+            right: 8%;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 3;
+        }
+
+        .dashboard-screen {
+            width: 280px;
+            height: 380px;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
+            border-radius: 20px;
+            border: 2px solid var(--accent-cyan);
+            box-shadow: 0 20px 60px rgba(34, 211, 238, 0.4);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.1), transparent);
+            animation: scanLine 3s ease-in-out infinite;
+        }
+
+        @keyframes scanLine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(34, 211, 238, 0.3);
+        }
+
+        .dashboard-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--accent-cyan); }
+            50% { opacity: 0.4; }
+        }
+
+        .metric-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(34, 211, 238, 0.05);
+            transform: translateX(5px);
+        }
+
+        .metric-label {
+            font-size: 0.7rem;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .metric-trend {
+            font-size: 0.75rem;
+            color: #4ade80;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 3px;
+            animation: progressGrow 2s ease-out;
+        }
+
+        @keyframes progressGrow {
+            from { width: 0; }
+        }
+
+        .chart-mini {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 40px;
+            margin-top: 8px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--accent-cyan), var(--accent-blue));
+            border-radius: 2px 2px 0 0;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+            animation: barGrow 1s ease-out backwards;
+        }
+
+        .metric-card:hover .chart-bar {
+            opacity: 1;
+        }
+
+        @keyframes barGrow {
+            from { transform: scaleY(0); }
+            to { transform: scaleY(1); }
+        }
+
+        .chart-bar:nth-child(1) { height: 60%; animation-delay: 0.1s; }
+        .chart-bar:nth-child(2) { height: 80%; animation-delay: 0.2s; }
+        .chart-bar:nth-child(3) { height: 45%; animation-delay: 0.3s; }
+        .chart-bar:nth-child(4) { height: 90%; animation-delay: 0.4s; }
+        .chart-bar:nth-child(5) { height: 70%; animation-delay: 0.5s; }
+        .chart-bar:nth-child(6) { height: 95%; animation-delay: 0.6s; }
+
+        /* Floating Data Points */
+        .data-point {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--accent-cyan);
+            animation: dataFloat 8s ease-in-out infinite;
+        }
+
+        .data-point:nth-child(1) { top: 15%; left: 20%; animation-delay: 0s; }
+        .data-point:nth-child(2) { top: 30%; right: 25%; animation-delay: 2s; }
+        .data-point:nth-child(3) { bottom: 25%; left: 30%; animation-delay: 4s; }
+        .data-point:nth-child(4) { bottom: 40%; right: 20%; animation-delay: 6s; }
+
+        @keyframes dataFloat {
+            0%, 100% { transform: translate(0, 0); opacity: 0.4; }
+            25% { transform: translate(15px, -20px); opacity: 1; }
+            50% { transform: translate(-10px, -35px); opacity: 0.6; }
+            75% { transform: translate(20px, -15px); opacity: 1; }
+        }
+
+        /* ===== STATS SECTION ===== */
+        .stats {
+            padding: 6rem 3rem;
+            background: var(--darker-navy);
+            opacity: 0;
+            animation: fadeIn 1s ease-out 0.4s forwards;
+            position: relative;
+        }
+
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 2rem;
+            transition: all 0.5s ease;
+            position: relative;
+        }
+
+        .stat-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+            transition: width 0.5s ease;
+        }
+
+        .stat-item:hover::before {
+            width: 100%;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-10px);
+        }
+
+        .stat-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-icon::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-100%) skew(-20deg);
+            transition: transform 0.6s ease;
+        }
+
+        .stat-item:hover .stat-icon::before {
+            transform: translateX(100%) skew(-20deg);
+        }
+
+        .stat-item:hover .stat-icon {
+            transform: rotateY(360deg);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: var(--text-gray);
+        }
+
+        /* ===== SECTION STYLES ===== */
+        section {
+            padding: 6rem 3rem;
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-gray);
+            line-height: 1.7;
+        }
+
+        /* ===== FEATURE CARDS ===== */
+        .features-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2.5rem;
+        }
+
+        .feature-card {
+            background: var(--medium-navy);
+            border-radius: 25px;
+            padding: 3rem;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.1), transparent);
+            transition: left 0.7s ease;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(34, 211, 238, 0.3);
+            border-color: rgba(34, 211, 238, 0.4);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(94, 159, 217, 0.2));
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--accent-cyan);
+            margin-bottom: 1.5rem;
+            transition: all 0.5s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: rotateY(360deg) scale(1.1);
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: white;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .feature-card:hover h3 {
+            color: var(--accent-cyan);
+        }
+
+        .feature-card p {
+            color: var(--text-gray);
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        /* ===== SHOWCASE SECTION ===== */
+        .showcase {
+            background: var(--darker-navy);
+            padding: 8rem 3rem;
+            position: relative;
+        }
+
+        .showcase-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+        }
+
+        .showcase-image {
+            width: 100%;
+            height: 450px;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(34, 211, 238, 0.1));
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 600;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* NEW: GPS Tracking Animation */
+        .gps-tracker {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+
+        .gps-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border: 3px solid var(--accent-cyan);
+            border-radius: 50%;
+            animation: gpsPulse 2s ease-out infinite;
+        }
+
+        .gps-circle:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+
+        .gps-circle:nth-child(3) {
+            animation-delay: 1s;
+        }
+
+        @keyframes gpsPulse {
+            0% {
+                width: 100px;
+                height: 100px;
+                opacity: 1;
+            }
+            100% {
+                width: 300px;
+                height: 300px;
+                opacity: 0;
+            }
+        }
+
+        .gps-pin {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: var(--accent-cyan);
+            border-radius: 50% 50% 50% 0;
+            transform-origin: 0 0;
+            animation: pinBounce 1s ease-in-out infinite;
+        }
+
+        @keyframes pinBounce {
+            0%, 100% { transform: translate(-50%, -50%) rotate(-45deg) scale(1); }
+            50% { transform: translate(-50%, -60%) rotate(-45deg) scale(1.1); }
+        }
+
+        .showcase-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+            font-weight: 700;
+        }
+
+        .showcase-text p {
+            font-size: 1.1rem;
+            color: var(--text-gray);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .showcase-features {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .showcase-feature-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--medium-navy);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+        }
+
+        .showcase-feature-item:hover {
+            transform: translateX(15px);
+            border-color: rgba(34, 211, 238, 0.4);
+            background: linear-gradient(90deg, var(--medium-navy), rgba(34, 211, 238, 0.1));
+        }
+
+        .showcase-feature-item .icon-box {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            transition: transform 0.4s ease;
+        }
+
+        .showcase-feature-item:hover .icon-box {
+            transform: rotate(360deg);
+        }
+
+        /* ===== ELEGANT DISPLAY SECTION ===== */
+        .elegant-display {
+            background: var(--dark-navy);
+            padding: 8rem 3rem;
+        }
+
+        .display-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .display-card {
+            background: linear-gradient(135deg, var(--medium-navy), var(--dark-navy));
+            border-radius: 30px;
+            padding: 4rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .display-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(34, 211, 238, 0.1), transparent);
+            border-radius: 50%;
+            transition: all 0.7s ease;
+        }
+
+        .display-card:hover::before {
+            top: -30%;
+            right: -30%;
+            width: 500px;
+            height: 500px;
+        }
+
+        .display-card:hover {
+            transform: scale(1.03);
+            border-color: rgba(34, 211, 238, 0.3);
+            box-shadow: 0 30px 60px rgba(34, 211, 238, 0.2);
+        }
+
+        .display-card h3 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+            position: relative;
+        }
+
+        .display-card p {
+            font-size: 1.05rem;
+            color: var(--text-gray);
+            line-height: 1.8;
+            position: relative;
+        }
+
+        .display-visual {
+            margin-top: 2rem;
+            width: 100%;
+            height: 200px;
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 600;
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* NEW: Support Chat Animation */
+        .chat-bubbles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .chat-bubble {
+            position: absolute;
+            padding: 0.8rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            animation: bubbleSlide 3s ease-in-out infinite;
+        }
+
+        .chat-bubble:nth-child(1) {
+            background: rgba(34, 211, 238, 0.3);
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .chat-bubble:nth-child(2) {
+            background: rgba(94, 159, 217, 0.3);
+            top: 50%;
+            right: 10%;
+            animation-delay: 1s;
+        }
+
+        .chat-bubble:nth-child(3) {
+            background: rgba(155, 139, 198, 0.3);
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 2s;
+        }
+
+        @keyframes bubbleSlide {
+            0%, 100% { transform: translateY(0); opacity: 0.5; }
+            50% { transform: translateY(-10px); opacity: 1; }
+        }
+
+        /* ===== PLATFORM SECTION ===== */
+        .platforms {
+            background: var(--darker-navy);
+            padding: 6rem 3rem;
+        }
+
+        .platform-icons-grid {
+            max-width: 1000px;
+            margin: 3rem auto 0;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 2rem;
+        }
+
+        .platform-item {
+            background: var(--medium-navy);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        .platform-item:hover {
+            transform: translateY(-12px) rotate(5deg);
+            box-shadow: 0 20px 40px rgba(34, 211, 238, 0.3);
+            border-color: rgba(34, 211, 238, 0.4);
+            background: linear-gradient(135deg, var(--medium-navy), rgba(34, 211, 238, 0.1));
+        }
+
+        .platform-item span {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 0.8rem;
+            transition: transform 0.4s ease;
+        }
+
+        .platform-item:hover span {
+            transform: scale(1.3) rotate(-5deg);
+        }
+
+        .platform-item p {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            font-weight: 500;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--darker-navy);
+            color: var(--text-light);
+            padding: 4rem 3rem 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-gray);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-cyan);
+            transition: width 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-cyan);
+        }
+
+        .footer-links a:hover::after {
+            width: 100%;
+        }
+
+        footer p {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        /* ===== SCROLL TO TOP BUTTON ===== */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(100px);
+            transition: all 0.3s ease;
+            z-index: 999;
+            box-shadow: 0 5px 20px rgba(34, 211, 238, 0.4);
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(34, 211, 238, 0.6);
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1024px) {
+            .hero-content,
+            .showcase-content,
+            .display-grid {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .platform-icons-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .truck-container {
+                transform: scale(0.8);
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem 1.5rem;
+            }
+
+            .nav-links {
+                position: fixed;
+                left: -100%;
+                top: 70px;
+                flex-direction: column;
+                background: rgba(15, 23, 42, 0.98);
+                width: 100%;
+                padding: 2rem;
+                gap: 1.5rem;
+                transition: left 0.3s ease;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .hero {
+                padding: 6rem 1.5rem 3rem;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-text p {
+                font-size: 1.1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            section {
+                padding: 4rem 1.5rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            .platform-icons-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .truck-visual {
+                height: 350px;
+            }
+
+            .ai-brain-container {
+                left: 5%;
+                transform: scale(0.7) translateY(-50%);
+            }
+
+            .data-flow-container {
+                left: 25%;
+                transform: scale(0.65) translateY(-50%);
+            }
+
+            .dashboard-container {
+                right: 5%;
+                transform: scale(0.75) translateY(-50%);
+            }
+
+            .dashboard-screen {
+                width: 240px;
+                height: 320px;
+                padding: 15px;
+            }
+
+            .metric-card {
+                padding: 10px;
+                margin-bottom: 8px;
+            }
+
+            .metric-value {
+                font-size: 1.2rem;
+            }
+        }
+        
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">🚚</div>
+                Logisti<span>Flow</span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#booking">Booking</a></li>
+                <li><a href="#tracking">Tracking</a></li>
+                <li><a href="#support">Support</a></li>
+                <li><a href="#fleet">Fleet</a></li>
+                <li><a href="#communication">Communication</a></li>
+                <li><a href="#platforms">Platforms</a></li>
+            </ul>
+            <div class="menu-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Modern Logistics Made Simple</h1>
+                <p>Experience seamless transportation and logistics management with our elegant, AI-powered platform. Track, manage, and optimize your deliveries effortlessly.</p>
+                <div class="cta-buttons">
+                    <button class="btn-primary" onclick="scrollToSection('booking')">
+                        Get Started →
+                    </button>
+                    <button class="btn-secondary" onclick="scrollToSection('tracking')">
+                        Track Shipment
+                    </button>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="truck-visual">
+                    <!-- Floating Data Points -->
+                    <div class="data-point"></div>
+                    <div class="data-point"></div>
+                    <div class="data-point"></div>
+                    <div class="data-point"></div>
+
+                    <!-- AI Brain Visualization -->
+                    <div class="ai-brain-container">
+                        <div class="ai-brain">
+                            <div class="brain-ring"></div>
+                            <div class="brain-ring"></div>
+                            <div class="brain-ring"></div>
+                            <div class="brain-core">
+                                <div class="ai-particles"></div>
+                                <div class="ai-particles"></div>
+                                <div class="ai-particles"></div>
+                                <div class="ai-particles"></div>
+                            </div>
+                        </div>
+                        <div class="ai-label">AI Powered</div>
+                    </div>
+
+                    <!-- Data Flow Network -->
+                    <div class="data-flow-container">
+                        <div class="flow-node">📦</div>
+                        <div class="flow-node">🚛</div>
+                        <div class="flow-node">📍</div>
+                        <div class="flow-node">📊</div>
+                        <div class="flow-node">⚡</div>
+                        <div class="flow-node">🔔</div>
+                        <div class="flow-node">🌐</div>
+                        <div class="flow-node">📈</div>
+                    </div>
+
+                    <!-- Professional Dashboard -->
+                    <div class="dashboard-container">
+                        <div class="dashboard-screen">
+                            <div class="dashboard-header">
+                                <div class="dashboard-title">Logistics Control</div>
+                                <div class="status-indicator">
+                                    <div class="status-dot"></div>
+                                    <span>LIVE</span>
+                                </div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">Active Deliveries</div>
+                                <div class="metric-value">
+                                    1,247
+                                    <div class="metric-trend">↑ 12%</div>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 78%;"></div>
+                                </div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">Fleet Status</div>
+                                <div class="metric-value">
+                                    94%
+                                    <div class="metric-trend">↑ 8%</div>
+                                </div>
+                                <div class="chart-mini">
+                                    <div class="chart-bar"></div>
+                                    <div class="chart-bar"></div>
+                                    <div class="chart-bar"></div>
+                                    <div class="chart-bar"></div>
+                                    <div class="chart-bar"></div>
+                                    <div class="chart-bar"></div>
+                                </div>
+                            </div>
+
+                            <div class="metric-card">
+                                <div class="metric-label">On-Time Rate</div>
+                                <div class="metric-value">
+                                    98.2%
+                                    <div class="metric-trend">↑ 3%</div>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 98%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <div class="stats">
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-icon">📦</div>
+                <div class="stat-number">500K+</div>
+                <div class="stat-label">Deliveries Completed</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon">🚛</div>
+                <div class="stat-number">2,500+</div>
+                <div class="stat-label">Active Fleet Vehicles</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-number">98%</div>
+                <div class="stat-label">Satisfaction Rate</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon">🌍</div>
+                <div class="stat-number">50+</div>
+                <div class="stat-label">Countries Served</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Grid Section -->
+    <section id="booking">
+        <div class="section-header">
+            <h2 class="section-title">Comprehensive Logistics Solutions</h2>
+            <p class="section-subtitle">Everything you need to manage your transportation and delivery operations in one elegant platform</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📋</div>
+                <h3>Order Booking</h3>
+                <p>Streamline your pickup and delivery scheduling with an intuitive booking system designed for efficiency and ease of use.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🗺️</div>
+                <h3>Real-Time Tracking</h3>
+                <p>Monitor your shipments in real-time with precise location updates and estimated delivery times for complete transparency.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔧</div>
+                <h3>Issue Resolution</h3>
+                <p>Quickly report and resolve any delivery concerns with our responsive issue management system and dedicated support.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💬</div>
+                <h3>24/7 Support</h3>
+                <p>Access round-the-clock assistance through our AI-powered chatbot and expert human support team whenever you need help.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🚚</div>
+                <h3>Fleet Management</h3>
+                <p>Comprehensive oversight of your entire fleet with real-time status updates, maintenance tracking, and resource allocation.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Route Optimization</h3>
+                <p>Maximize efficiency with intelligent route planning that considers traffic, weather, and delivery priorities for optimal performance.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase Section - Tracking -->
+    <section id="tracking" class="showcase">
+        <div class="showcase-content">
+            <div class="showcase-image">
+                <div class="gps-tracker">
+                    <div class="gps-circle"></div>
+                    <div class="gps-circle"></div>
+                    <div class="gps-circle"></div>
+                    <div class="gps-pin"></div>
+                </div>
+            </div>
+            <div class="showcase-text">
+                <h2>Track Every Shipment with Precision</h2>
+                <p>Stay informed at every step of your delivery journey. Our advanced tracking system provides real-time updates, location mapping, and delivery notifications.</p>
+                <div class="showcase-features">
+                    <div class="showcase-feature-item">
+                        <div class="icon-box">📍</div>
+                        <div>
+                            <strong style="display: block; margin-bottom: 0.3rem; color: var(--text-light);">Live Location Updates</strong>
+                            <p style="margin: 0; font-size: 0.9rem; color: var(--text-gray);">See exactly where your package is at any moment</p>
+                        </div>
+                    </div>
+                    <div class="showcase-feature-item">
+                        <div class="icon-box">⏰</div>
+                        <div>
+                            <strong style="display: block; margin-bottom: 0.3rem; color: var(--text-light);">Accurate ETAs</strong>
+                            <p style="margin: 0; font-size: 0.9rem; color: var(--text-gray);">Get precise estimated delivery times updated in real-time</p>
+                        </div>
+                    </div>
+                    <div class="showcase-feature-item">
+                        <div class="icon-box">🔔</div>
+                        <div>
+                            <strong style="display: block; margin-bottom: 0.3rem; color: var(--text-light);">Smart Notifications</strong>
+                            <p style="margin: 0; font-size: 0.9rem; color: var(--text-gray);">Receive updates via your preferred communication channel</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Display Cards Section - Support & Fleet -->
+    <section id="support" class="elegant-display">
+        <div class="section-header">
+            <h2 class="section-title">Intelligent Operations</h2>
+            <p class="section-subtitle">Advanced features that power modern logistics management</p>
+        </div>
+        <div class="display-grid">
+            <div class="display-card">
+                <h3>Customer Support Hub</h3>
+                <p>Experience unparalleled customer service with our AI-assisted support system. Get instant answers, escalate complex issues to human agents, and enjoy seamless communication across all channels.</p>
+                <div class="display-visual">
+                    <div class="chat-bubbles">
+                        <div class="chat-bubble">Hello! 👋</div>
+                        <div class="chat-bubble">How can I help?</div>
+                        <div class="chat-bubble">24/7 Support</div>
+                    </div>
+                    <span style="position: relative; z-index: 10; font-weight: 600; color: var(--accent-cyan);">💬</span>
+                </div>
+            </div>
+            <div class="display-card" id="fleet">
+                <h3>Fleet & Inventory</h3>
+                <p>Comprehensive dashboard for monitoring your entire fleet, tracking vehicle maintenance, managing inventory levels, and optimizing resource allocation for maximum operational efficiency.</p>
+                <div class="display-visual">
+                    <span style="font-weight: 600; color: var(--accent-cyan); font-size: 4rem;">🚛</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+     <!-- Communication Section -->
+    <section id="communication" class="showcase">
+        <div class="showcase-content">
+            <div class="showcase-text">
+                <h2>Seamless Internal Communication</h2>
+                <p>Keep your entire team connected with integrated communication tools designed for logistics operations. Coordinate drivers, dispatchers, and warehouse staff effortlessly.</p>
+                <div class="showcase-features">
+                    <div class="showcase-feature-item">
+                        <div class="icon-box">💬</div>
+                        <div>
+                            <strong style="display: block; margin-bottom: 0.3rem; color: var(--text-light);">Team Messaging</strong>
+                            <p style="margin: 0; font-size: 0.9rem; color: var(--text-gray);">Real-time chat for instant coordination</p>
+                        </div>
+                    </div>
+                    <div class="showcase-feature-item">
+                        <div class="icon-box">📢</div>
+                        <div>
+                            <strong style="display: block; margin-bottom: 0.3rem; color: var(--text-light);">Broadcast Updates</strong>
+                            <p style="margin: 0; font-size: 0.9rem; color: var(--text-gray);">Share important announcements company-wide</p>
+                        </div>
+                    </div>
+                    <div class="showcase-feature-item">
+                        <div class="icon-box">📊</div>
+                        <div>
+                            <strong style="display: block; margin-bottom: 0.3rem; color: var(--text-light);">Performance Insights</strong>
+                            <p style="margin: 0; font-size: 0.9rem; color: var(--text-gray);">Analytics and reports for continuous improvement</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="showcase-image">
+                <span style="font-size: 5rem;">💼</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Multi-Platform Section -->
+    <section id="platforms" class="platforms">
+        <div class="section-header">
+            <h2 class="section-title">Connect Anywhere, Anytime</h2>
+            <p class="section-subtitle">Access our platform through your preferred channel with multilingual support in over 50 languages</p>
+        </div>
+        <div class="platform-icons-grid">
+            <div class="platform-item">
+                <span>💬</span>
+                <p>Web Chat</p>
+            </div>
+            <div class="platform-item">
+                <span>📱</span>
+                <p>WhatsApp</p>
+            </div>
+            <div class="platform-item">
+                <span>📧</span>
+                <p>Email</p>
+            </div>
+            <div class="platform-item">
+                <span>📞</span>
+                <p>Voice</p>
+            </div>
+            <div class="platform-item">
+                <span>💻</span>
+                <p>Mobile App</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#home">Home</a>
+                <a href="#booking">Services</a>
+                <a href="#tracking">Tracking</a>
+                <a href="#support">Support</a>
+                <a href="#fleet">Fleet</a>
+                <a href="#platforms">Contact</a>
+            </div>
+            <p>&copy; 2025 LogistiFlow. All rights reserved. | Modern Transportation & Logistics Solutions</p>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <div class="scroll-top" id="scrollTop" onclick="scrollToTop()">
+        ↑
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Toggle mobile menu
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+
+        // Smooth scroll with offset for fixed nav
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                const navHeight = 80;
+                const targetPosition = section.offsetTop - navHeight;
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+                document.getElementById('navLinks').classList.remove('active');
+            }
+        }
+
+        // Smooth scroll for all anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const navHeight = 80;
+                    const targetPosition = target.offsetTop - navHeight;
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                    document.getElementById('navLinks').classList.remove('active');
+                }
+            });
+        });
+
+        // Scroll animations observer
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section, .stats').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Navbar scroll effect
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            const scrollTop = document.getElementById('scrollTop');
+            const currentScroll = window.pageYOffset;
+
+            if (currentScroll > 100) {
+                navbar.classList.add('scrolled');
+                scrollTop.classList.add('visible');
+            } else {
+                navbar.classList.remove('scrolled');
+                scrollTop.classList.remove('visible');
+            }
+
+            lastScroll = currentScroll;
+        });
+
+        // Scroll to top function
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Feature card stagger animation
+        const featureCards = document.querySelectorAll('.feature-card');
+        const featureObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, index * 100);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        featureCards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.6s ease';
+            featureObserver.observe(card);
+        });
+    </script>
+</body>
+</html>
